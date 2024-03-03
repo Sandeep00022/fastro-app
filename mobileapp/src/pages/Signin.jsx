@@ -70,7 +70,7 @@ const Signin = () => {
           <Icons />
         </div>
       </div>
-      <div className="h-screen w-full flex flex-col justify-center items-center">
+      <div className="h-screen w-full flex flex-col xl:w-[50%] xl:m-auto justify-center items-center">
         <div className="">
           <h3 className="text-xl font-semibold">OTP Verification</h3>
           <p className="text-sm text-gray-500">
