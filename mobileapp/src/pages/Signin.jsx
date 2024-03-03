@@ -1,11 +1,16 @@
 import React, { useState, useRef } from "react";
 import Icons from "../components/Icons";
 import CurrentTime from "../components/CurrentTime";
-import { Button } from "flowbite-react";
+import { Button, Spinner, TextInput } from "flowbite-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(["1", "2", "3", "4", "5", "6"]);
   const refs = [useRef(), useRef(), useRef(), useRef(), useRef(), useRef()];
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (index, value) => {
     const newOtp = [...otp];
@@ -25,7 +30,36 @@ const Signin = () => {
     }
   };
 
-  console.log(otp.join(""))
+  const userLogin = async () => {
+    const phone = localStorage.getItem("phoneNumber");
+    try {
+      setLoading(true);
+      await axios
+        .post(
+          "https://staging.fastor.in/v1/pwa/user/login",
+          {
+            phone: phone,
+            otp: Number(otp.join("")),
+            dial_code: +91,
+          },
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
+        )
+        .then((res) => {
+          setLoading(false);
+          console.log(res)
+          localStorage.setItem("token", res.data.data.token);
+          navigate("/restaurant");
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(otp.join(""));
   return (
     <div className="h-screen flex flex-col items-center max-w-full p-4">
       <div className="flex justify-between w-full self">
@@ -46,11 +80,12 @@ const Signin = () => {
         <div className="w-full">
           <div className="flex justify-between mt-2 w-full gap-2">
             {otp.map((digit, index) => (
-              <input
+              <TextInput
                 key={index}
                 ref={refs[index]}
-                type="text"
+                type="number"
                 maxLength={1}
+                max="1"
                 className="w-1/6 text-center rounded-md py-2 px-3 focus:outline-none"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
@@ -58,9 +93,23 @@ const Signin = () => {
               />
             ))}
           </div>
-          <Button className="bg-[#ff6d6a] text-white w-full mt-4" color="white">
-            Verify
+          <Button
+            className="bg-[#ff6d6a] text-white w-full mt-7"
+            color="white"
+            onClick={userLogin}
+          >
+            {loading ? (
+              <span>
+                <Spinner className="mr-2" /> ...Verifying
+              </span>
+            ) : (
+              " Verify"
+            )}
           </Button>
+          <p className="text-center mt-4">
+            Didn't received code?{" "}
+            <span className="text-blue-500 font-semibold ">Resend</span>
+          </p>
         </div>
       </div>
     </div>
