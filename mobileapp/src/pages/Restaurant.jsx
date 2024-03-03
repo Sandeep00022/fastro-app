@@ -56,9 +56,9 @@ const Restaurant = () => {
         </div>
       </div>
       <div className=" flex justify-between items-center w-full mt-[60px] p-5 ">
-        <div className="w-full mr-3">
-          <h2 className="text-3xl font-bold text-gray-400">Sandeep</h2>
-          <div className="text-2xl font-bold">Let's explore this evening</div>
+        <div className="w-full mr-4">
+          <h2 className="text-3xl sm:text-xl font-bold text-gray-400">Sandeep</h2>
+          <div className="text-lg font-bold ">Let's explore this evening</div>
         </div>
         <div className="flex items-center gap-6">
           {" "}

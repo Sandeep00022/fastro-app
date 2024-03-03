@@ -46,7 +46,7 @@ const Signup = () => {
 
   return (
     <div className="h-screen flex flex-col  items-center  max-w-full p-4">
-      <div className="flex justify-between w-full self">
+      <div className="fixed top-0 left-0 w-full flex justify-between self p-4 bg-white z-10">
         <div className="">
           <CurrentTime />
         </div>
@@ -58,7 +58,7 @@ const Signup = () => {
         <div className="">
           <h3 className="text-xl font-semibold">Enter Your Mobile Number</h3>
           <p className="text-sm text-gray-500">
-            We will send you the 4 digit verification code
+            We will send you the 6 digit verification code
           </p>
         </div>
         <div className="w-full">

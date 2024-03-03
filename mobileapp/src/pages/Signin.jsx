@@ -62,7 +62,7 @@ const Signin = () => {
   console.log(otp.join(""));
   return (
     <div className="h-screen flex flex-col items-center max-w-full p-4">
-      <div className="flex justify-between w-full self">
+      <div className="fixed top-0 left-0 w-full flex justify-between self p-4 bg-white z-10">
         <div className="">
           <CurrentTime />
         </div>
@@ -86,7 +86,7 @@ const Signin = () => {
                 type="number"
                 maxLength={1}
                 max="1"
-                className="w-1/6 text-center rounded-md py-2 px-3 focus:outline-none"
+                className="w-1/6 text-center rounded-md py-2 px-1 focus:outline-none"
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleBackspace(index, e)}

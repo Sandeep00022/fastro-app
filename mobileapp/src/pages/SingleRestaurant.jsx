@@ -29,14 +29,32 @@ const SingleRestaurant = () => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
 
+    const handleTouchMove = (e) => {
+      if (!isDragging) return;
+      const newX = e.touches[0].clientX - offsetX.current;
+      const newY = e.touches[0].clientY - offsetY.current;
+      draggableRef.current.style.left = newX + "px";
+      draggableRef.current.style.top = newY + "px";
+    };
+
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleTouchEnd);
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isDragging]);
 
@@ -47,31 +65,39 @@ const SingleRestaurant = () => {
     offsetY.current = e.clientY - rect.top;
   };
 
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    const rect = draggableRef.current.getBoundingClientRect();
+    offsetX.current = e.touches[0].clientX - rect.left;
+    offsetY.current = e.touches[0].clientY - rect.top;
+  };
+
   console.log(data);
   return (
     <div className="p-4">
-       <div className="relative">
-      <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col justify-between">
-        <div className="flex justify-between p-4">
-          <div className="">
-            <CurrentTime />
+      <div className="relative">
+        <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col justify-between">
+          <div className="fixed top-0 left-0 w-full flex justify-between self p-4 bg-white z-10">
+            <div className="">
+              <CurrentTime />
+            </div>
+            <div className="">
+              <Icons />
+            </div>
           </div>
-          <div className="">
-            <Icons />
-          </div>
+          {/* Add additional content here */}
         </div>
-        {/* Add additional content here */}
+        <img className="w-full h-auto" src={data?.images[0].url} alt="" />
+        <div
+          ref={draggableRef}
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white text-4xl font-bold bg-black bg-opacity-50 p-2 rounded-md"
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          style={{ cursor: "grab", userSelect: "none" }}
+        >
+          FASTOR7
+        </div>
       </div>
-      <img className="w-full h-auto" src={data?.images[0].url} alt="" />
-      <div
-        ref={draggableRef}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white text-4xl font-bold bg-black bg-opacity-50 p-2 rounded-md"
-        onMouseDown={handleMouseDown}
-        style={{ cursor: 'grab', userSelect: 'none' }}
-      >
-        FASTOR7
-      </div>
-    </div>
       <div className="flex justify-between rounded-t-3xl mt-[-70px]  p-4 bg-white relative z-20">
         <div className="">
           <p className="text-lg font-semibold">{data?.restaurant_name}</p>
