@@ -1,31 +1,77 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CurrentTime from "../components/CurrentTime";
 import Icons from "../components/Icons";
 import { CiDiscount1 } from "react-icons/ci";
 import { CiStar } from "react-icons/ci";
+import DragDrop from "../components/DragDrop";
 
 const SingleRestaurant = () => {
+  const [isDragging, setIsDragging] = useState(false);
   const [data, setData] = useState(
     JSON.parse(localStorage.getItem("restaurant" || {}))
   );
+  const draggableRef = useRef(null);
+  const offsetX = useRef(0);
+  const offsetY = useRef(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+      const newX = e.clientX - offsetX.current;
+      const newY = e.clientY - offsetY.current;
+      draggableRef.current.style.left = newX + "px";
+      draggableRef.current.style.top = newY + "px";
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isDragging]);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    const rect = draggableRef.current.getBoundingClientRect();
+    offsetX.current = e.clientX - rect.left;
+    offsetY.current = e.clientY - rect.top;
+  };
 
   console.log(data);
   return (
     <div className="p-4">
-      <div className=" relative">
-        <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col justify-between ">
-          <div className="flex justify-between p-4">
-            <div className="">
-              <CurrentTime />
-            </div>
-            <div className="">
-              <Icons />
-            </div>
+       <div className="relative">
+      <div className="absolute top-0 left-0 right-0 bottom-0 flex flex-col justify-between">
+        <div className="flex justify-between p-4">
+          <div className="">
+            <CurrentTime />
           </div>
-          {/* Add additional content here */}
+          <div className="">
+            <Icons />
+          </div>
         </div>
-        <img className="w-full h-auto" src={data?.images[0].url} alt="" />
+        {/* Add additional content here */}
       </div>
+      <img className="w-full h-auto" src={data?.images[0].url} alt="" />
+      <div
+        ref={draggableRef}
+        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-white text-4xl font-bold bg-black bg-opacity-50 p-2 rounded-md"
+        onMouseDown={handleMouseDown}
+        style={{ cursor: 'grab', userSelect: 'none' }}
+      >
+        FASTOR7
+      </div>
+    </div>
       <div className="flex justify-between rounded-t-3xl mt-[-70px]  p-4 bg-white relative z-20">
         <div className="">
           <p className="text-lg font-semibold">{data?.restaurant_name}</p>
@@ -43,7 +89,7 @@ const SingleRestaurant = () => {
         </div>
       </div>
       <div className="mt-9 p-5">
-        <p >
+        <p>
           Our delicate Vanilla cake swirled with chocolate and filled with macha
           chocolate chip cream and a layer of dark chocolate ganache
         </p>

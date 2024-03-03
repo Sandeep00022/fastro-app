@@ -4,7 +4,7 @@ import { RiUserLocationLine } from "react-icons/ri";
 import { CiDiscount1 } from "react-icons/ci";
 import { LuWallet } from "react-icons/lu";
 import { CgShapeCircle, CgShapeTriangle, CgShapeSquare } from "react-icons/cg";
-import { Button } from "flowbite-react";
+import { Button, Spinner } from "flowbite-react";
 import MyCarousel from "../components/MyCarousel";
 import Carousel from "../components/Carousel";
 import RestaurantCard from "../components/RestaurantCard";
@@ -15,7 +15,7 @@ const Restaurant = () => {
 
   const getResturant = async () => {
     try {
-        setLoading(true)
+      setLoading(true);
       await axios
         .get(`https://staging.fastor.in/v1/m/restaurant?city_id=${118}`, {
           headers: {
@@ -25,7 +25,7 @@ const Restaurant = () => {
         })
         .then((res) => {
           setAllRestaurants(res.data);
-          setLoading(false)
+          setLoading(false);
         });
     } catch (error) {
       console.log(error);
@@ -97,20 +97,37 @@ const Restaurant = () => {
         </div>
         <div>
           {" "}
-          <MyCarousel allRestaurants={allRestaurants} />
+          {loading ? (
+            <div className="flex justify-center ">
+              <Spinner />
+            </div>
+          ) : (
+            <MyCarousel allRestaurants={allRestaurants} />
+          )}
         </div>
         <div className="mt-8 p-3 w-full ">
-          <Carousel allRestaurants={allRestaurants} />
+          {loading ? (
+            <div className="flex justify-center ">
+              <Spinner />
+            </div>
+          ) : (
+            <Carousel allRestaurants={allRestaurants} />
+          )}
         </div>
         <div className="mt-9 p-3 w-full">
-          <h2 className="text-2xl font-bold mb-3">Your taste</h2>
-
-          <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-3 gap-4">
-            {allRestaurants &&
-              allRestaurants.map((rest) => (
-                <RestaurantCard key={rest.restaurant_uuid} rest={rest} />
-              ))}
-          </div>
+          <h2 className="text-2xl font-bold mb-3">Popular Ones</h2>
+          {loading ? (
+            <div className="flex justify-center ">
+              <Spinner />
+            </div>
+          ) : (
+            <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-3 gap-4">
+              {allRestaurants &&
+                allRestaurants.map((rest) => (
+                  <RestaurantCard key={rest.restaurant_uuid} rest={rest} />
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
